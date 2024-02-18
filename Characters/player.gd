@@ -2,8 +2,6 @@ extends CharacterBody2D
 
 signal healthChanged
 
-var gittest
-
 @export var speed: int = 80
 @onready var animations = $AnimationPlayer
 @onready var effects = $Effect
