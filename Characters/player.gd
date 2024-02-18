@@ -2,9 +2,12 @@ extends CharacterBody2D
 
 signal healthChanged
 
+var gittest
+
 @export var speed: int = 80
 @onready var animations = $AnimationPlayer
 @onready var effects = $Effect
+@onready var hurtBox = $Hitbox
 @onready var hurtTimer = $hurtTimer
 
 @export var maxHealth = 5
@@ -13,7 +16,6 @@ signal healthChanged
 @export var knockbackPower: int = 2000
 
 var isHurt: bool = false
-var enemyCollisions = []
 
 func _ready():
 	effects.play("RESET")
@@ -46,8 +48,9 @@ func _physics_process(_delta):
 	handleCollision()
 	updateAnimation()
 	if !isHurt:
-		for enemyArea in enemyCollisions:
-			hurtByEnemy(enemyArea)
+		for area in hurtBox.get_overlapping_areas():
+			if area.name == "HitBox":
+				hurtByEnemy(area)
 
 func hurtByEnemy(area):
 	currentHealth -= 1
@@ -63,15 +66,13 @@ func hurtByEnemy(area):
 	effects.play("RESET")
 	isHurt = false
 
-func _on_hitbox_area_entered(area):
-	if area.name == "HitBox":
-		enemyCollisions.append(area)
-		
-		
+func _on_hitbox_area_entered(_area):
+	pass
+
 func knockback(enemyVelocity: Vector2):
 	var knockbackDirection = (enemyVelocity - velocity).normalized() * knockbackPower
 	velocity = knockbackDirection
 	move_and_slide()
 	
-func _on_hitbox_area_exited(area):
-	enemyCollisions.erase(area)
+func _on_hitbox_area_exited(_area):
+	pass
